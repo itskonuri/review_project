@@ -1,3 +1,5 @@
 /.streamlit
 /temp_uploads
 /__pycache__
+/*.env
+/*.csv
