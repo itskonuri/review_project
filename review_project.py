@@ -29,6 +29,8 @@ st.title("음식점 리뷰 요약 서비스 🍽️")
 url=st.text_input('리뷰를 분석할 식당의 리뷰URL을 입력하세요')
 
 if st.button('시작'):
+    status = st.status("📊 최신순으로 정렬 중... ")
+    progress_bar = st.progress(15)  # 초기 진행률 설정
     if url:
         chrome_options=Options() #Options 객체 설정. 이거 안하면 실행 안됨.
         chrome_options.add_argument("--headless") #창 열지 않음
@@ -83,7 +85,8 @@ if st.button('시작'):
             except TimeoutException:
                 print("시간 초과")
                 break
-
+        status.update(label="🔍 더보기 진행 중...")
+        progress_bar.progress(35)
         def format_date(raw_date):
 # 
 #  날짜 포맷 변환
@@ -136,6 +139,8 @@ if st.button('시작'):
             review for review in reviews if datetime.strptime(review["Date"],"%y-%m")>=recent_date_limit
         ]
 #8개월 전 날짜 이후 리뷰들 리스트에 저장
+        status.update(label="💾 최근 8개월 리뷰 저장 중...")
+        progress_bar.progress(55)
 
         reviews_by_month={}
         for review in filtered_reviews:
@@ -145,7 +150,8 @@ if st.button('시작'):
                 reviews_by_month[month]=[]
             reviews_by_month[month].append(review)
 #월별로 분류
-
+        status.update(label="📅 각 달별 리뷰 선별 중...")
+        progress_bar.progress(80)
         final_reviews=[]
         while len(final_reviews) < 100:
             if len(reviews_by_month) <30:
@@ -197,7 +203,8 @@ if st.button('시작'):
     리뷰:
     {reviews}
     """
-
+    status.update(label="🤖 리뷰 기반 GPT 분석 중...")
+    progress_bar.progress(100)
     completion = openai.chat.completions.create(
     model="gpt-4o",
     temperature=0.1,
